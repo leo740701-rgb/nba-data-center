@@ -1,0 +1,34 @@
+name: Daily NBA Data Update
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 下載程式碼
+        uses: actions/checkout@v4
+
+      - name: 2. 設定 Python 環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 3. 安裝套件
+        run: pip install pandas nba_api
+
+      - name: 4. 執行收集腳本
+        run: python update_nba_data.py
+
+      - name: 5. 儲存最新數據回 GitHub
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "自動更新：每日 NBA 戰力數據"
+          
